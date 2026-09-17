@@ -199,7 +199,7 @@ app.post('/api/chat', async (req, res) => {
       const groqResponse = await axios.post(
         'https://api.groq.com/openai/v1/chat/completions',
         {
-          model: 'llama-3.3-70b-versatile',
+          model: 'groq/compound-mini',
           messages: groqMessages,
           temperature: 0.7,
           max_tokens: 1024
@@ -223,7 +223,7 @@ app.post('/api/chat', async (req, res) => {
           }
         ],
         provider: 'groq',
-        statusMessage: '⚡ Connected to Groq API (llama-3.3-70b-versatile)'
+        statusMessage: '⚡ Connected to Groq API (groq/compound-mini)'
       });
     } catch (groqError) {
       console.warn('Groq API failed or timed out. Falling back to Gemini AI...', groqError.response?.data || groqError.message);
