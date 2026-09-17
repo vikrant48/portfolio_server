@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const axios = require('axios');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 require('dotenv').config();
 
 const app = express();
@@ -144,6 +145,9 @@ About Vikrant Chauhan:
 - Contact: vikrantchauhan9794@gmail.com | +91-6386696764 | GitHub: vikrant48
 - Key Achievements: Reduced backend request processing by 20%, decreased page load time by 15%, remediated 15+ Snyk security vulnerabilities, National Chess Champion (U-17).
 
+Work Experience:
+${PORTFOLIO_DATA.experience.map(exp => `- ${exp.role} at ${exp.company} (${exp.period}, ${exp.location}, Team: ${exp.team}):\n  ${exp.achievements.map(a => `• ${a}`).join('\n  ')}\n  Key Tech: ${exp.skills.join(', ')}`).join('\n\n')}
+
 Technical Expertise:
 ${PORTFOLIO_DATA.skills.map(s => `- ${s.name} (${s.proficiency}%): ${s.description}`).join('\n')}
 
@@ -151,14 +155,15 @@ Certifications:
 ${PORTFOLIO_DATA.certifications.map(c => `- ${c.title} (${c.issuer}, ${c.date})`).join('\n')}
 
 Key Projects:
-${PORTFOLIO_DATA.projects.map(p => `${p.id}. ${p.title}: ${p.description}`).join('\n')}
+${PORTFOLIO_DATA.projects.map(p => `${p.id}. ${p.title} (${p.techStack ? p.techStack.join(', ') : ''}):\n  - ${p.description}\n  - Highlights: ${p.highlights ? p.highlights.join('; ') : ''}\n  - Code: ${p.githubUrl || ''} | Live: ${p.liveUrl || ''}`).join('\n\n')}
 
 Education Highlights:
-${PORTFOLIO_DATA.education.map(e => `- ${e.title} from ${e.institution} (${e.period})`).join('\n')}
+${PORTFOLIO_DATA.education.map(e => `- ${e.title} from ${e.institution} (${e.period}) - ${e.grade || ''}`).join('\n')}
 
 Guidelines for your responses:
 - Tone: Professional, helpful, enthusiastic, and concise.
 - Goal: Help visitors understand why Vikrant is a great hire or collaborator.
+- Highlight his SDE-1 role at PeopleStrong, GenAI/LLM project CogniDocs, and production systems CareSync & VideoMela whenever relevant.
 - If asked about his resume, mention it's available for download/preview in the "Resume" or "Projects" section.
 `;
 
@@ -177,50 +182,96 @@ app.get('/api/config', (req, res) => {
 app.post('/api/chat', async (req, res) => {
   const { messages } = req.body;
 
-  if (!process.env.GEMINI_API_KEY) {
-    return res.status(500).json({ error: 'Gemini API key not configured on server.' });
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: 'Invalid messages format.' });
   }
 
-  try {
-    // Translate OpenAI-style messages to Gemini-style contents
-    const contents = messages
-      .filter(m => m.role !== 'system') // Gemini uses system_instruction for system role
-      .map(m => ({
-        role: m.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: m.content }]
-      }));
+  // 1. Try Primary: Groq API
+  const groqApiKey = process.env.GROQ_API_KEY;
+  if (groqApiKey) {
+    try {
+      console.log('Sending request to Groq API (Primary)...');
+      const groqMessages = [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ...messages.filter(m => m.role !== 'system')
+      ];
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
-
-    const response = await axios.post(geminiUrl, {
-      contents: contents,
-      system_instruction: {
-        parts: [{ text: SYSTEM_PROMPT }]
-      }
-    });
-
-    // Translate Gemini response back to OpenAI-style for the frontend
-    const aiText = response.data.candidates[0].content.parts[0].text;
-
-    // We mock the OpenAI response structure to keep frontend changes minimal
-    const mockOpenAIResponse = {
-      choices: [
+      const groqResponse = await axios.post(
+        'https://api.groq.com/openai/v1/chat/completions',
         {
-          message: {
-            content: aiText
-          }
+          model: 'llama-3.3-70b-versatile',
+          messages: groqMessages,
+          temperature: 0.7,
+          max_tokens: 1024
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${groqApiKey}`,
+            'Content-Type': 'application/json'
+          },
+          timeout: 10000
         }
-      ]
-    };
+      );
 
-    res.json(mockOpenAIResponse);
-  } catch (error) {
-    console.error('Gemini API Error:', error.response?.data || error.message);
-    res.status(500).json({
-      error: 'Failed to communicate with Gemini AI.',
-      details: error.response?.data || error.message
-    });
+      const aiText = groqResponse.data.choices[0].message.content;
+      return res.json({
+        choices: [
+          {
+            message: {
+              content: aiText
+            }
+          }
+        ],
+        provider: 'groq'
+      });
+    } catch (groqError) {
+      console.warn('Groq API failed or timed out. Falling back to Gemini AI...', groqError.response?.data || groqError.message);
+    }
   }
+
+  // 2. Fallback: Gemini API
+  if (process.env.GEMINI_API_KEY) {
+    try {
+      console.log('Sending request to Gemini API (Fallback)...');
+      const contents = messages
+        .filter(m => m.role !== 'system')
+        .map(m => ({
+          role: m.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: m.content }]
+        }));
+
+      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+
+      const response = await axios.post(geminiUrl, {
+        contents: contents,
+        system_instruction: {
+          parts: [{ text: SYSTEM_PROMPT }]
+        }
+      });
+
+      const aiText = response.data.candidates[0].content.parts[0].text;
+      return res.json({
+        choices: [
+          {
+            message: {
+              content: aiText
+            }
+          }
+        ],
+        provider: 'gemini'
+      });
+    } catch (geminiError) {
+      console.error('Gemini API Error:', geminiError.response?.data || geminiError.message);
+      return res.status(500).json({
+        error: 'Both Groq and Gemini AI services failed.',
+        details: geminiError.response?.data || geminiError.message
+      });
+    }
+  }
+
+  return res.status(500).json({
+    error: 'Neither GROQ_API_KEY nor GEMINI_API_KEY are configured on the server.'
+  });
 });
 
 if (process.env.NODE_ENV !== 'production') {
