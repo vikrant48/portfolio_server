@@ -167,6 +167,23 @@ Guidelines for your responses:
 - If asked about his resume, mention it's available for download/preview in the "Resume" or "Projects" section.
 `;
 
+// Root & Health Check Endpoint
+app.get(['/', '/api/health'], (req, res) => {
+  const hasGroq = !!process.env.GROQ_API_KEY;
+  const hasGemini = !!process.env.GEMINI_API_KEY;
+  res.json({
+    status: 'online',
+    message: 'Vikrant Portfolio Backend Server is running!',
+    resumeUrl: process.env.RESUME_URL || '',
+    aiServices: {
+      groqConfigured: hasGroq,
+      geminiConfigured: hasGemini,
+      activeEngine: hasGroq ? 'Groq API (groq/compound-mini)' : (hasGemini ? 'Gemini AI (gemini-2.5-flash)' : 'None')
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Endpoint to fetch all portfolio data
 app.get('/api/portfolio-data', (req, res) => {
   res.json(PORTFOLIO_DATA);
@@ -196,37 +213,40 @@ app.post('/api/chat', async (req, res) => {
         ...messages.filter(m => m.role !== 'system')
       ];
 
-      const groqResponse = await axios.post(
-        'https://api.groq.com/openai/v1/chat/completions',
-        {
+      const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${groqApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           model: 'groq/compound-mini',
           messages: groqMessages,
           temperature: 0.7,
           max_tokens: 1024
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${groqApiKey}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 10000
-        }
-      );
-
-      const aiText = groqResponse.data.choices[0].message.content;
-      return res.json({
-        choices: [
-          {
-            message: {
-              content: aiText
-            }
-          }
-        ],
-        provider: 'groq',
-        statusMessage: '⚡ Connected to Groq API (groq/compound-mini)'
+        })
       });
+
+      const groqData = await groqResponse.json();
+
+      if (groqResponse.ok && groqData.choices && groqData.choices[0]) {
+        const aiText = groqData.choices[0].message.content;
+        return res.json({
+          choices: [
+            {
+              message: {
+                content: aiText
+              }
+            }
+          ],
+          provider: 'groq',
+          statusMessage: '⚡ Connected to Groq API (groq/compound-mini)'
+        });
+      } else {
+        console.warn('Groq API Error Response:', groqData);
+      }
     } catch (groqError) {
-      console.warn('Groq API failed or timed out. Falling back to Gemini AI...', groqError.response?.data || groqError.message);
+      console.warn('Groq API failed or timed out. Falling back to Gemini AI...', groqError.message);
     }
   }
 
@@ -243,30 +263,40 @@ app.post('/api/chat', async (req, res) => {
 
       const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
-      const response = await axios.post(geminiUrl, {
-        contents: contents,
-        system_instruction: {
-          parts: [{ text: SYSTEM_PROMPT }]
-        }
+      const geminiResponse = await fetch(geminiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: contents,
+          system_instruction: {
+            parts: [{ text: SYSTEM_PROMPT }]
+          }
+        })
       });
 
-      const aiText = response.data.candidates[0].content.parts[0].text;
-      return res.json({
-        choices: [
-          {
-            message: {
-              content: aiText
+      const geminiData = await geminiResponse.json();
+
+      if (geminiResponse.ok && geminiData.candidates && geminiData.candidates[0]) {
+        const aiText = geminiData.candidates[0].content.parts[0].text;
+        return res.json({
+          choices: [
+            {
+              message: {
+                content: aiText
+              }
             }
-          }
-        ],
-        provider: 'gemini',
-        statusMessage: '⚠️ Groq not connected. Using Gemini AI Fallback'
-      });
+          ],
+          provider: 'gemini',
+          statusMessage: '⚠️ Groq not connected. Using Gemini AI Fallback'
+        });
+      } else {
+        console.error('Gemini API Error Response:', geminiData);
+      }
     } catch (geminiError) {
-      console.error('Gemini API Error:', geminiError.response?.data || geminiError.message);
+      console.error('Gemini API Error:', geminiError.message);
       return res.status(500).json({
         error: 'Both Groq and Gemini AI services failed.',
-        details: geminiError.response?.data || geminiError.message
+        details: geminiError.message
       });
     }
   }
