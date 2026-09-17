@@ -222,7 +222,8 @@ app.post('/api/chat', async (req, res) => {
             }
           }
         ],
-        provider: 'groq'
+        provider: 'groq',
+        statusMessage: '⚡ Connected to Groq API (llama-3.3-70b-versatile)'
       });
     } catch (groqError) {
       console.warn('Groq API failed or timed out. Falling back to Gemini AI...', groqError.response?.data || groqError.message);
@@ -258,7 +259,8 @@ app.post('/api/chat', async (req, res) => {
             }
           }
         ],
-        provider: 'gemini'
+        provider: 'gemini',
+        statusMessage: '⚠️ Groq not connected. Using Gemini AI Fallback'
       });
     } catch (geminiError) {
       console.error('Gemini API Error:', geminiError.response?.data || geminiError.message);
