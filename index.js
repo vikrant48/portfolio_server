@@ -11,27 +11,40 @@ app.use(express.json());
 
 // Centralized Portfolio Data
 const PORTFOLIO_DATA = {
+  experience: [
+    {
+      id: 1,
+      role: 'Software Development Engineer -- I',
+      company: 'PeopleStrong',
+      location: 'Gurugram, India',
+      period: 'Nov 2025 -- Present',
+      team: 'Recruit & Onboarding Team',
+      achievements: [
+        'Actively driving backend development for high-volume recruitment workflows as an SDE-1 in the Recruit & Onboarding team following Scrum methodologies.',
+        'Conceptualized and deployed scalable backend services using Java and Spring Boot, creating optimized RESTful APIs that reduced request processing time by 20%.',
+        'Partnered on Angular frontend integration to support backend-driven features, streamlining the onboarding flow and decreasing page load time by 15%.',
+        'Fortified application security by remediating 15+ critical vulnerabilities identified by Snyk (including DoS, RCE, SQL Injection, and XSS).'
+      ],
+      skills: ['Java', 'Spring Boot', 'Angular', 'Microservices', 'RESTful APIs', 'Snyk Security', 'Scrum']
+    }
+  ],
   skills: [
-    { name: 'JavaScript', svgPath: 'assets/icons/skills/Javascript.svg', category: 'Frontend', proficiency: 90, description: 'Modern ES6+ JavaScript for dynamic web applications' },
-    { name: 'TypeScript', svgPath: 'assets/icons/skills/Typescript.svg', category: 'Frontend', proficiency: 85, description: 'Type-safe JavaScript for scalable applications' },
-    { name: 'React', svgPath: 'assets/icons/skills/React.svg', category: 'Frontend', proficiency: 88, description: 'Component-based UI library for interactive interfaces' },
-    { name: 'Angular', svgPath: 'assets/icons/skills/angularjs.svg', category: 'Frontend', proficiency: 82, description: 'Full-featured framework for enterprise applications' },
-    { name: 'Tailwind CSS', svgPath: 'assets/icons/skills/tailwind-css.svg', category: 'Frontend', proficiency: 90, description: 'Utility-first CSS framework for rapid UI development' },
-    { name: 'Node.js', svgPath: 'assets/icons/skills/Nodedotjs.svg', category: 'Backend', proficiency: 85, description: 'Server-side JavaScript runtime environment' },
-    { name: 'Express.js', svgPath: 'assets/icons/skills/express.svg', category: 'Backend', proficiency: 88, description: 'Fast and minimalist web framework for Node.js' },
-    { name: 'MongoDB', svgPath: 'assets/icons/skills/mongodb.svg', category: 'Database', proficiency: 80, description: 'NoSQL document database for flexible data storage' },
-    { name: 'MySQL', svgPath: 'assets/icons/skills/mysql.svg', category: 'Database', proficiency: 75, description: 'Relational database management system' },
-    { name: 'Redis', svgPath: 'assets/icons/skills/redis.svg', category: 'Database', proficiency: 70, description: 'In-memory data structure store for caching' },
-    { name: 'Java', svgPath: 'assets/icons/skills/java.svg', category: 'Backend', proficiency: 78, description: 'Object-oriented programming language for enterprise solutions' },
-    { name: 'Spring Boot', svgPath: 'assets/icons/skills/spring-boot.svg', category: 'Backend', proficiency: 75, description: 'Java framework for building microservices' },
-    { name: 'Kafka', svgPath: 'assets/icons/skills/kafka.svg', category: 'DevOps', proficiency: 72, description: 'Distributed event streaming platform for high-throughput pipelines' },
-    { name: 'GitHub', svgPath: 'assets/icons/skills/github.svg', category: 'Tools', proficiency: 90, description: 'Version control and collaborative development platform' },
-    { name: 'Docker', svgPath: 'assets/icons/skills/docker.svg', category: 'DevOps', proficiency: 72, description: 'Containerization platform for application deployment' },
-    { name: 'Postman', svgPath: 'assets/icons/skills/postman.svg', category: 'Tools', proficiency: 85, description: 'API development and testing tool' },
-    { name: 'VS Code', svgPath: 'assets/icons/skills/vs-code.svg', category: 'Tools', proficiency: 95, description: 'Powerful code editor with extensive extensions' },
-    { name: 'C++', svgPath: 'assets/icons/skills/cpp3.svg', category: 'Programming', proficiency: 80, description: 'High-performance programming language for system development' },
-    { name: 'Cloudinary', svgPath: 'assets/icons/skills/Cloudinary.svg', category: 'Cloud', proficiency: 75, description: 'Cloud-based image and video management service' },
-    { name: 'Vercel', svgPath: 'assets/icons/skills/vercel.svg', category: 'Cloud', proficiency: 80, description: 'Frontend deployment platform with global CDN' }
+    { name: 'Java', svgPath: 'assets/icons/skills/java.svg', category: 'Backend', proficiency: 92, description: 'Object-oriented programming, multithreading, and core DSA foundation' },
+    { name: 'Spring Boot', svgPath: 'assets/icons/skills/spring-boot.svg', category: 'Backend', proficiency: 90, description: 'Microservices, RESTful APIs, Spring Security, JPA, TaskExecutors' },
+    { name: 'LangGraph & CrewAI', svgPath: 'assets/icons/skills/python.svg', category: 'AI/GenAI', proficiency: 88, description: 'Multi-agent AI pipelines, persistent state graphs, and autonomous workflows' },
+    { name: 'LangChain & RAG', svgPath: 'assets/icons/skills/python.svg', category: 'AI/GenAI', proficiency: 88, description: 'Hybrid search (BM25 + dense vector RRF fusion), Cohere reranking' },
+    { name: 'Python & FastAPI', svgPath: 'assets/icons/skills/python.svg', category: 'Programming', proficiency: 85, description: 'Asynchronous streaming web frameworks, ChromaDB, Pinecone' },
+    { name: 'Angular', svgPath: 'assets/icons/skills/angularjs.svg', category: 'Frontend', proficiency: 84, description: 'RxJS, Standalone components, state management, enterprise UI' },
+    { name: 'React.js & Redux', svgPath: 'assets/icons/skills/React.svg', category: 'Frontend', proficiency: 88, description: 'Component architectures, Redux Toolkit, real-time WebSocket UI' },
+    { name: 'Redis', svgPath: 'assets/icons/skills/redis.svg', category: 'Database', proficiency: 82, description: 'High-concurrency caching layer for sub-100ms API response times' },
+    { name: 'MySQL & PostgreSQL', svgPath: 'assets/icons/skills/mysql.svg', category: 'Database', proficiency: 85, description: 'Relational data modeling, schema indexing, and JPA ORM' },
+    { name: 'MongoDB', svgPath: 'assets/icons/skills/mongodb.svg', category: 'Database', proficiency: 82, description: 'NoSQL document database for flexible scale applications' },
+    { name: 'Docker & Kubernetes', svgPath: 'assets/icons/skills/docker.svg', category: 'DevOps', proficiency: 80, description: 'Containerization, microservices deployment, and orchestration' },
+    { name: 'Kafka', svgPath: 'assets/icons/skills/kafka.svg', category: 'DevOps', proficiency: 75, description: 'Distributed event streaming platform for high-throughput pipelines' },
+    { name: 'Node.js & Express', svgPath: 'assets/icons/skills/Nodedotjs.svg', category: 'Backend', proficiency: 85, description: 'Server-side JavaScript runtime environment' },
+    { name: 'Tailwind CSS', svgPath: 'assets/icons/skills/tailwind-css.svg', category: 'Frontend', proficiency: 90, description: 'Utility-first CSS framework for responsive UI' },
+    { name: 'C++', svgPath: 'assets/icons/skills/cpp3.svg', category: 'Programming', proficiency: 80, description: 'System programming, SFML, data structures and algorithms' },
+    { name: 'Snyk & Security', svgPath: 'assets/icons/skills/github.svg', category: 'Tools', proficiency: 85, description: 'Vulnerability remediation (DoS, RCE, SQLi, XSS) and SAST' }
   ],
   certifications: [
     { id: 1, title: 'AWS Certified Solutions Architect', issuer: 'Amazon Web Services', date: '2023', credentialId: 'AWS-SAA-2023-001', verificationUrl: 'https://aws.amazon.com/verification', description: 'Demonstrates expertise in designing distributed systems on AWS platform.', skills: ['AWS', 'Cloud Architecture', 'EC2', 'S3', 'Lambda', 'RDS'], badgeUrl: 'https://images.credly.com/size/340x340/images/0e284c3f-5164-4b21-8660-0d84737941bc/image.png' },
@@ -42,72 +55,94 @@ const PORTFOLIO_DATA = {
     { id: 6, title: 'MongoDB Certified Developer', issuer: 'MongoDB University', date: '2022', credentialId: 'MDB-DEV-2022-006', verificationUrl: 'https://university.mongodb.com/verify_certificate', description: 'Proficiency in MongoDB database design and development.', skills: ['MongoDB', 'NoSQL', 'Database Design', 'Aggregation', 'Indexing'], badgeUrl: 'https://webimages.mongodb.com/_com_assets/cms/kuzt9r42or1fxvlq2-Meta_Generic.png' }
   ],
   education: [
-    { id: 1, title: 'Bachelor of Technology', subtitle: 'Electronics and Communication Engineering', institution: 'NITK Surathkal', period: '2021 - 2025', achievements: ['NITK Racing'], dotColor: 'blue' },
-    { id: 2, title: '12th Grade', subtitle: 'Science (PCM)', institution: 'JNV Bengaluru Urban', period: '2018 - 2020', percentage: '90%', achievements: ['JEE-Advanced Qualified'], dotColor: 'green' },
-    { id: 3, title: '10th Grade', subtitle: 'Secondary Education', institution: 'JNV Mau', period: '2017 - 2018', percentage: '91%', achievements: ['Dakshana Qualified'], dotColor: 'orange' },
-    { id: 4, title: '6th - 9th Grade', subtitle: 'Secondary Education', institution: 'JNV Mau', period: '2013 - 2017', achievements: ['🏆 National Chess Champion (U-17)'], dotColor: 'purple' }
+    { id: 1, title: 'College (B.Tech)', subtitle: 'Electronics & Communication', institution: 'NITK Surathkal', period: '2021 - 2025', achievements: ['NITK Racing Member', 'Robotics & Embedded Systems'], dotColor: 'blue' },
+    { id: 2, title: '12th Grade', subtitle: 'Senior Secondary (PCM)', institution: 'JNV Bengaluru Urban', period: '2018 - 2020', percentage: '90%', achievements: ['JEE-Advanced Qualified', 'School Topper'], dotColor: 'emerald' },
+    { id: 3, title: '10th Grade', subtitle: 'Higher Secondary (PCM)', institution: 'JNV Mau', period: '2017 - 2018', percentage: '91%', achievements: ['Dakshana Scholar Selection'], dotColor: 'purple' },
+    { id: 4, title: 'School Education', subtitle: 'Class 6th - 9th', institution: 'JNV Mau', period: '2013 - 2017', achievements: ['🏆 National Chess Champion (U-17)'], dotColor: 'amber' }
   ],
   projects: [
     {
       id: 1,
-      title: 'VideoMela',
-      description: 'A comprehensive video streaming platform with user authentication, video upload, and real-time comments.',
-      techStack: ['React', 'Node.js', 'MongoDB', 'Express.js', 'Docker'],
-      liveUrl: 'https://video-mela.vercel.app/',
-      githubUrl: 'https://github.com/vikrant48/Video_Mela_backend',
-      iconType: 'video',
-      gradientClass: 'from-red-500 to-pink-500',
-      hoverBorderClass: 'hover:border-red-500/50',
-      hoverTitleClass: 'group-hover:text-red-300'
-    },
-    {
-      id: 2,
       title: 'CareSync',
-      description: 'Comprehensive healthcare management system with patient data management and appointment scheduling.',
-      techStack: ['Java', 'Spring Boot', 'MySQL', 'Redis', 'Docker'],
+      description: 'HIPAA-compliant healthcare system featuring Multi-LLM clinical diagnosis assistant, LLM symptom doctor recommendation engine, Java 21 thread-safe multithreading pipeline, WebSocket alerts, and sub-100ms Redis caching.',
+      techStack: ['Spring Boot', 'Angular', 'Multi LLM AI', 'WebSocket', 'Redis', 'Supabase', 'Java 21'],
       liveUrl: 'https://caresync-vikrant.vercel.app/',
       githubUrl: 'https://github.com/vikrant48/careSync',
       iconType: 'heart',
       gradientClass: 'from-orange-500 to-red-500',
       hoverBorderClass: 'hover:border-orange-500/50',
-      hoverTitleClass: 'group-hover:text-orange-300'
+      hoverTitleClass: 'group-hover:text-orange-300',
+      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-doctor-typing-on-a-computer-43187-large.mp4',
+      highlights: ['Multi-LLM Clinical Assistant & Doctor Booking', 'Java 21 Thread-Safe Multithreading Pipeline', 'HIPAA AES-256 Encryption & Sub-100ms Redis Cache']
+    },
+    {
+      id: 2,
+      title: 'CogniDocs',
+      description: 'Agentic document intelligence Q&A platform built with LangGraph multi-agent pipeline (Extractor, Analyser, Q&A), production RAG (hybrid vector + BM25 search with Cohere reranking), and real-time WebSocket token streaming.',
+      techStack: ['Python', 'LangChain', 'LangGraph', 'ChromaDB', 'FastAPI', 'WebSocket', 'Cohere'],
+      liveUrl: 'https://github.com/vikrant48/pdf-rag-pipeline',
+      githubUrl: 'https://github.com/vikrant48/pdf-rag-pipeline',
+      iconType: 'video',
+      gradientClass: 'from-blue-500 to-indigo-500',
+      hoverBorderClass: 'hover:border-blue-500/50',
+      hoverTitleClass: 'group-hover:text-blue-300',
+      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-futuristic-robotic-arm-working-in-a-lab-42797-large.mp4',
+      highlights: ['Multi-Agent LangGraph Pipeline (Extractor, Analyser, Q&A)', 'Hybrid RAG Search (Dense Vector + BM25 + Cohere Reranking)', 'Real-Time WebSocket Token Streaming UX']
     },
     {
       id: 3,
+      title: 'VideoMela',
+      description: 'Full-stack video streaming platform supporting 1000+ daily active users with RESTful APIs, JWT/Bcrypt security, Cloudinary media processing (30% upload latency reduction), and Redux Toolkit state management.',
+      techStack: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Cloudinary', 'Redux Toolkit'],
+      liveUrl: 'https://video-mela.vercel.app/',
+      githubUrl: 'https://github.com/vikrant48/Video_Mela_backend',
+      iconType: 'video',
+      gradientClass: 'from-red-500 to-pink-500',
+      hoverBorderClass: 'hover:border-red-500/50',
+      hoverTitleClass: 'group-hover:text-red-300',
+      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-code-running-on-a-computer-screen-41554-large.mp4',
+      highlights: ['1000+ Daily Active Users & RESTful APIs', 'Cloudinary Integration (30% Latency Reduction)', 'Redux Toolkit (25% Faster Page Rendering)']
+    },
+    {
+      id: 4,
       title: 'NewsMela',
-      description: 'A modern news application that fetches real-time news from various sources with category filtering.',
-      techStack: ['React', 'News API', 'Responsive'],
+      description: 'A modern news application that fetches real-time news from various sources with category filtering and ultra-fast client-side rendering.',
+      techStack: ['React', 'News API', 'Responsive UI'],
       liveUrl: 'https://news-mela-vikrants-projects-a97203d3.vercel.app/',
       githubUrl: 'https://github.com/vikrant48/NewsMela',
       iconType: 'news',
       gradientClass: 'from-green-500 to-emerald-500',
       hoverBorderClass: 'hover:border-green-500/50',
-      hoverTitleClass: 'group-hover:text-green-300'
+      hoverTitleClass: 'group-hover:text-green-300',
+      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-working-on-a-laptop-computer-in-an-office-42796-large.mp4',
+      highlights: ['Real-time News API Integration', 'Category Filtering & Instant Search', 'Ultra-fast Client Rendering']
     },
     {
-      id: 4,
+      id: 5,
       title: 'Graph Algorithms Visualizer',
-      description: 'Interactive visualization tool for graph algorithms including BFS, DFS, Dijkstra\'s, and more.',
+      description: 'Interactive visualization tool for graph algorithms including BFS, DFS, Dijkstra\'s, and shortest path finding.',
       techStack: ['C++', 'SFML', 'Algorithms'],
       liveUrl: 'https://graph-algo-visualizer.netlify.app',
       githubUrl: 'https://github.com/vikrant48/Graph_Algorithms_Visualizer',
       iconType: 'graph',
       gradientClass: 'from-purple-500 to-indigo-500',
       hoverBorderClass: 'hover:border-purple-500/50',
-      hoverTitleClass: 'group-hover:text-purple-300'
+      hoverTitleClass: 'group-hover:text-purple-300',
+      videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-software-developer-working-on-code-screen-close-up-41551-large.mp4',
+      highlights: ['BFS & DFS Step-by-Step Visualization', 'Dijkstra Shortest Pathfinding', 'Custom Interactive Node Creation']
     }
   ]
 };
 
-// System prompt giving Gemini context about Vikrant
 const SYSTEM_PROMPT = `
 You are the AI Assistant for Vikrant Chauhan's professional portfolio. 
 
 About Vikrant Chauhan:
-- Background: Graduate of National Institute of Technology Karnataka (NITK) Surathkal (Class of 2025). 
-- Role: Full Stack Developer & Problem Solver with 2+ years of experience.
-- Location: Gurugram, India.
-- Notable Achievement: National Chess Champion (U-17).
+- Role: Software Development Engineer -- I at PeopleStrong (Recruit & Onboarding Team, Gurugram, India).
+- Specialization: Java, Spring Boot, Microservices, Angular, and GenAI / LangGraph Agentic Systems.
+- Background: Graduate of National Institute of Technology Karnataka (NITK) Surathkal (B.Tech in ECE, 2021-2025). 
+- Contact: vikrantchauhan9794@gmail.com | +91-6386696764 | GitHub: vikrant48
+- Key Achievements: Reduced backend request processing by 20%, decreased page load time by 15%, remediated 15+ Snyk security vulnerabilities, National Chess Champion (U-17).
 
 Technical Expertise:
 ${PORTFOLIO_DATA.skills.map(s => `- ${s.name} (${s.proficiency}%): ${s.description}`).join('\n')}
@@ -135,7 +170,7 @@ app.get('/api/portfolio-data', (req, res) => {
 // Endpoint to fetch dynamic configuration (like resume URL)
 app.get('/api/config', (req, res) => {
   res.json({
-    resumeUrl: process.env.RESUME_URL || 'assets/resume/vikrant_resume_NITK.pdf'
+    resumeUrl: process.env.RESUME_URL || ''
   });
 });
 
